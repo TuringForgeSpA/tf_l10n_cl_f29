@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_tf_l10n_cl_f29_manager,tf_l10n_cl.f29 manager,model_tf_l10n_cl_f29,account.group_account_manager,1,1,1,1
+access_tf_l10n_cl_f29_line_manager,tf_l10n_cl.f29.line manager,model_tf_l10n_cl_f29_line,account.group_account_manager,1,1,1,1
+access_tf_l10n_cl_f29_comparison_manager,tf_l10n_cl.f29.comparison manager,model_tf_l10n_cl_f29_comparison,account.group_account_manager,1,1,1,1
+access_tf_l10n_cl_f29_rcv_import_manager,tf_l10n_cl.f29.rcv.import manager,model_tf_l10n_cl_f29_rcv_import,account.group_account_manager,1,1,1,1

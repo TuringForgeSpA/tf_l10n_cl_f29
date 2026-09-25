@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ruta real: views/f29_views.xml -->
+<odoo>
+    <record id="view_tf_l10n_cl_f29_form" model="ir.ui.view">
+        <field name="name">tf_l10n_cl.f29.form</field>
+        <field name="model">tf_l10n_cl.f29</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_compute" type="object" string="Calcular" class="btn-primary"
+                            invisible="state != 'draft'"/>
+                    <button name="action_import_rcv" type="object" string="Comparar con el RCV"
+                            invisible="state != 'draft'"/>
+                    <button name="action_present" type="object" string="Marcar como presentada"
+                            invisible="state != 'draft' or not line_ids"
+                            confirm="La declaración quedará bloqueada. ¿Continuar?"/>
+                    <button name="action_draft" type="object" string="Volver a borrador"
+                            invisible="state != 'presented'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-warning" role="alert" invisible="not warnings">
+                        <field name="warnings"/>
+                    </div>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group string="Período">
+                            <field name="month" readonly="state != 'draft'"/>
+                            <field name="year" readonly="state != 'draft'" options="{'format': false}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="total_to_pay"/>
+                            <field name="computed_at"/>
+                        </group>
+                        <group string="Datos para el cálculo">
+                            <field name="ppm_rate" readonly="state != 'draft'"/>
+                            <field name="ppv_credit" readonly="state != 'draft'"/>
+                            <field name="previous_remainder" readonly="state != 'draft'"/>
+                            <field name="utm_previous" readonly="state != 'draft'"/>
+                            <field name="utm_current" readonly="state != 'draft'"/>
+                            <field name="remainder_readjusted"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Códigos" name="codes">
+                            <field name="line_ids">
+                                <list create="false" delete="false"
+                                      decoration-bf="code in ('538', '537', '89', '77', '91')"
+                                      decoration-danger="rcv_available and difference != 0">
+                                    <field name="section"/>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="value"/>
+                                    <field name="rcv_value" optional="show" invisible="not rcv_available"/>
+                                    <field name="difference" optional="show" invisible="not rcv_available"/>
+                                    <field name="rcv_available" column_invisible="1"/>
+                                    <button name="action_open_moves" type="object" icon="fa-list"
+                                            title="Ver documentos" invisible="not move_ids"/>
+                                    <field name="move_ids" column_invisible="1"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Comparación con el RCV" name="comparison" invisible="not rcv_imported">
+                            <field name="comparison_ids">
+                                <list create="false" delete="false"
+                                      decoration-danger="status in ('missing_odoo', 'missing_sii')"
+                                      decoration-warning="status == 'difference'"
+                                      decoration-muted="status == 'match'">
+                                    <field name="status"/>
+                                    <field name="kind"/>
+                                    <field name="doc_type"/>
+                                    <field name="rut"/>
+                                    <field name="name"/>
+                                    <field name="folio"/>
+                                    <field name="move_id"/>
+                                    <field name="odoo_total"/>
+                                    <field name="sii_total"/>
+                                    <field name="odoo_iva"/>
+                                    <field name="sii_iva"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_tf_l10n_cl_f29_list" model="ir.ui.view">
+        <field name="name">tf_l10n_cl.f29.list</field>
+        <field name="model">tf_l10n_cl.f29</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'presented'">
+                <field name="name"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+                <field name="total_to_pay"/>
+                <field name="rcv_imported"/>
+                <field name="state" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_tf_l10n_cl_f29" model="ir.actions.act_window">
+        <field name="name">Declaraciones F29</field>
+        <field name="res_model">tf_l10n_cl.f29</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Crea la declaración F29 del mes</p>
+            <p>Elige el período y usa «Calcular»: el módulo propone cada código desde las facturas de
+               venta y de proveedor. Luego puedes compararlo con el Registro de Compras y Ventas del SII.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_tf_l10n_cl_f29" name="Declaraciones F29" parent="account.menu_finance_reports"
+              action="action_tf_l10n_cl_f29" sequence="90" groups="account.group_account_manager"/>
+</odoo>

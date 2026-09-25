@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ruta real: views/account_views.xml -->
+<odoo>
+    <record id="view_tax_form_tf_l10n_cl_f29" model="ir.ui.view">
+        <field name="name">account.tax.form.tf_l10n_cl_f29</field>
+        <field name="model">account.tax</field>
+        <field name="inherit_id" ref="account.view_tax_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type_tax_use']" position="after">
+                <field name="tf_dte_cl_f29_category"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_move_form_tf_l10n_cl_f29" model="ir.ui.view">
+        <field name="name">account.move.form.tf_l10n_cl_f29</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="tf_dte_cl_purchase_document_type"
+                       invisible="move_type not in ('in_invoice', 'in_refund')"
+                       readonly="state != 'draft'"/>
+                <field name="tf_dte_cl_purchase_folio"
+                       invisible="move_type not in ('in_invoice', 'in_refund')"
+                       readonly="state != 'draft'"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

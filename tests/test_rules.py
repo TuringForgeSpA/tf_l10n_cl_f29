@@ -84,3 +84,15 @@ class TestF29Rules(TransactionCase):
             {('sale', '33', '1-9', 1): {'total': 10, 'iva': 1}, ('sale', '33', '1-9', 3): {'total': 7, 'iva': 0}})
         self.assertEqual({(x['folio'], x['status']) for x in result},
                          {(1, 'match'), (2, 'missing_sii'), (3, 'missing_odoo')})
+
+
+@tagged('post_install', '-at_install', 'tf_l10n_cl_f29')
+class TestF29TemplateCategories(TransactionCase):
+
+    def test_template_taxes_exist(self):
+        """Cada impuesto que el F29 clasifica por plantilla debe existir en "Chile (TF)"."""
+        template_taxes = set(self.env['account.chart.template']._get_chart_template_data('cl_tf')['account.tax'])
+        missing = set(r.TEMPLATE_CATEGORIES) - template_taxes
+        self.assertFalse(missing, 'Plantillas de impuestos que ya no existen en tf_l10n_cl: %s' % sorted(missing))
+        unclassified = template_taxes - set(r.TEMPLATE_CATEGORIES)
+        self.assertFalse(unclassified, 'Impuestos de "Chile (TF)" sin categoría F29: %s' % sorted(unclassified))
